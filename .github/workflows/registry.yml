@@ -1,0 +1,74 @@
+name: Registry
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/registry.yml"
+      - "package.json"
+      - "package-lock.json"
+      - "registry/**"
+      - "schemas/**"
+      - "scripts/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/registry.yml"
+      - "package.json"
+      - "package-lock.json"
+      - "registry/**"
+      - "schemas/**"
+      - "scripts/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Validate registry
+        if: github.event_name == 'pull_request'
+        run: npm run validate -- --base "${{ github.event.pull_request.base.sha }}"
+      - name: Validate registry
+        if: github.event_name == 'push'
+        run: npm run validate
+
+  publish:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: plugin-catalog-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Publish immutable catalog release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="catalog-${GITHUB_SHA::12}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/catalog-v1.json --clobber
+          else
+            gh release create "$tag" dist/catalog-v1.json \
+              --latest \
+              --title "Plugin catalog ${GITHUB_SHA::7}" \
+              --notes "Generated from registry commit ${GITHUB_SHA}."
+          fi

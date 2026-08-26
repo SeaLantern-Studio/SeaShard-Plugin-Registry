@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "seashard-plugin.scheduled-commands",
+  "name": "定时指令",
+  "summary": "按延时、单次、每日或每周计划向指定 Minecraft 服务器发送控制台指令。",
+  "owners": ["LingyeNBird"],
+  "source": {
+    "type": "github",
+    "repository": "LingyeNBird/seashard-scheduled-commands"
+  },
+  "license": "AGPL-3.0-only",
+  "releases": [
+    {
+      "version": "0.1.0",
+      "tag": "v0.1.0",
+      "asset": "seashard-plugin.scheduled-commands-0.1.0.seashard-plugin",
+      "archiveSha256": "c7f4256a957c66e9a35d071b49ca039032e5ab2db7352cda235e493693ed53f7"
+    }
+  ]
+}

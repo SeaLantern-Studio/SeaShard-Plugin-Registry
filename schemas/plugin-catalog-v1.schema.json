@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://seashard.org/schemas/plugin-catalog-v1.schema.json",
+  "title": "SeaShard plugin catalog v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "plugins"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "plugins": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/plugin" }
+    }
+  },
+  "definitions": {
+    "plugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "summary", "owners", "source", "license", "releases"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "summary": { "type": "string" },
+        "owners": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "repository", "url"],
+          "properties": {
+            "type": { "const": "github" },
+            "repository": { "type": "string" },
+            "url": { "type": "string", "pattern": "^https://github\\.com/" }
+          }
+        },
+        "license": { "type": "string" },
+        "releases": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/release" }
+        }
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "tag",
+        "releaseUrl",
+        "downloadUrl",
+        "archiveSha256",
+        "packageDigest",
+        "publisher",
+        "compatibility",
+        "entries",
+        "fileCount",
+        "unpackedSize",
+        "yanked"
+      ],
+      "properties": {
+        "version": { "type": "string" },
+        "tag": { "type": "string" },
+        "releaseUrl": { "type": "string", "pattern": "^https://github\\.com/" },
+        "downloadUrl": { "type": "string", "pattern": "^https://github\\.com/" },
+        "archiveSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "packageDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "publisher": { "type": "string" },
+        "compatibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["seaShard"],
+          "properties": {
+            "seaShard": { "type": "string" },
+            "clientProtocol": { "type": "string" }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/entry" }
+        },
+        "fileCount": { "type": "integer", "minimum": 1 },
+        "unpackedSize": { "type": "integer", "minimum": 1 },
+        "yanked": { "type": "boolean" }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "runtime", "uses"],
+      "properties": {
+        "id": { "type": "string" },
+        "runtime": { "enum": ["host", "client"] },
+        "uses": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "hostProfiles": {
+          "type": "array",
+          "items": { "enum": ["electron", "node", "docker"] }
+        },
+        "targets": {
+          "type": "array",
+          "items": { "enum": ["desktop", "web", "mobile"] }
+        },
+        "os": {
+          "type": "array",
+          "items": { "enum": ["win32", "darwin", "linux", "aix", "freebsd", "openbsd", "sunos"] }
+        },
+        "arch": {
+          "type": "array",
+          "items": { "enum": ["x64", "arm64", "ia32", "arm", "riscv64", "ppc64", "s390x"] }
+        }
+      }
+    }
+  }
+}
