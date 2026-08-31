@@ -15,6 +15,12 @@
       "tag": "v0.1.0",
       "asset": "seashard-plugin.scheduled-commands-0.1.0.seashard-plugin",
       "archiveSha256": "c7f4256a957c66e9a35d071b49ca039032e5ab2db7352cda235e493693ed53f7"
+    },
+    {
+      "version": "0.2.0",
+      "tag": "v0.2.0",
+      "asset": "seashard-plugin.scheduled-commands-0.2.0.seashard-plugin",
+      "archiveSha256": "4c33e03233210cbc635d85731e5e5643f6c6346b65366f7308ab7cbdfdbfa696"
     }
   ]
 }

@@ -92,6 +92,7 @@
       "properties": {
         "id": { "type": "string" },
         "runtime": { "enum": ["host", "client"] },
+        "execution": { "enum": ["controller", "host"] },
         "uses": {
           "type": "object",
           "additionalProperties": {

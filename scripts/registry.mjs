@@ -345,7 +345,11 @@ function parsePluginManifest(input) {
 function parseManifestEntry(input, index) {
   const path = `manifest.entries[${index}]`;
   const entry = recordAt(input, path);
-  assertKeys(entry, ["id", "runtime", "module", "hostProfiles", "targets", "uses", "os", "arch"], path);
+  assertKeys(
+    entry,
+    ["id", "runtime", "execution", "module", "hostProfiles", "targets", "uses", "os", "arch"],
+    path,
+  );
   const id = patternedString(entry.id, `${path}.id`, pluginIdPattern);
   const runtime = enumAt(entry.runtime, `${path}.runtime`, ["host", "client"]);
   const module = stringAt(entry.module, `${path}.module`);
@@ -354,6 +358,12 @@ function parseManifestEntry(input, index) {
   }
   const uses = parseUses(entry.uses, `${path}.uses`);
   const result = { id, runtime, module, uses };
+  if (entry.execution !== undefined) {
+    result.execution = enumAt(entry.execution, `${path}.execution`, ["controller", "host"]);
+    if (runtime === "client" && result.execution === "host") {
+      throw new Error(`${path}.execution must be controller for client entries`);
+    }
+  }
 
   if (runtime === "host") {
     result.hostProfiles = enumArrayAt(entry.hostProfiles, `${path}.hostProfiles`, hostProfiles);
